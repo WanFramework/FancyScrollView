@@ -11,6 +11,11 @@ using EasingCore;
 
 namespace FancyScrollView
 {
+    public interface IFancyScrollRect
+    {
+        void RefreshLayout();
+    }
+
     /// <summary>
     /// ScrollRect スタイルのスクロールビューを実装するための抽象基底クラス.
     /// 無限スクロールおよびスナップには対応していません.
@@ -21,6 +26,9 @@ namespace FancyScrollView
     /// <typeparam name="TContext"><see cref="FancyScrollView{TItemData, TContext}.Context"/> の型.</typeparam>
     [RequireComponent(typeof(Scroller))]
     public abstract class FancyScrollRect<TItemData, TContext> : FancyScrollView<TItemData, TContext>
+#if UNITY_EDITOR
+    , IFancyScrollRect
+#endif
         where TContext : class, IFancyScrollRectContext, new()
     {
         /// <summary>
@@ -292,6 +300,12 @@ namespace FancyScrollView
                 Scroller.MovementType = MovementType.Elastic;
                 Debug.LogError("MovementType.Unrestricted is currently not supported in FancyScrollRect.");
             }
+        }
+
+        public void RefreshLayout()
+        {
+            Relayout();
+            ScrollTo(0, 0, 0.5f);
         }
     }
 
